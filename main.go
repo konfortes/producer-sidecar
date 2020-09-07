@@ -31,11 +31,21 @@ func main() {
 	asyncProducer = newAsyncProducer(config)
 	defer asyncProducer.Close()
 
-	createHTTPHandlers()
+	createServer()
 }
 
 func configureKafkaClient() *config {
+	saramaConfig := sarama.NewConfig()
+	saramaConfig.Producer.Return.Errors = true
+
+	if saslUsername != nil && saslPassword != nil {
+		saramaConfig.Net.SASL.Enable = true
+		saramaConfig.Net.SASL.User = *saslUsername
+		saramaConfig.Net.SASL.Password = *saslPassword
+	}
+
 	return &config{
 		hosts: seedBrokers,
+		c:     saramaConfig,
 	}
 }

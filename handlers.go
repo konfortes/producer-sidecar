@@ -9,8 +9,9 @@ import (
 
 // ReqBody ...
 type ReqBody struct {
-	Topic   string `json:"topic"`
-	Payload string `json:"payload"`
+	Topic           string `json:"topic"`
+	Payload         string `json:"payload"`
+	PartitioningKey string `json:"key,omitempty"`
 }
 
 // http localhost:3000/produceAsync topic='stam' payload='{"a": 1, "b": 2}'
@@ -26,6 +27,7 @@ func produceAsync(w http.ResponseWriter, req *http.Request) {
 	producePayload := sarama.ProducerMessage{
 		Topic: body.Topic,
 		Value: sarama.StringEncoder(body.Payload),
+		Key:   sarama.StringEncoder(body.PartitioningKey),
 	}
 
 	asyncProducer.Input() <- &producePayload
