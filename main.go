@@ -1,6 +1,8 @@
 package main
 
 import (
+	"sync"
+
 	"github.com/Shopify/sarama"
 	"gopkg.in/alecthomas/kingpin.v2"
 )
@@ -11,8 +13,9 @@ type config struct {
 }
 
 var (
-	host = kingpin.Flag("host", "the host to bind to").Short('h').Default("127.0.0.1").Envar("HOST").IP()
-	port = kingpin.Flag("port", "the port to bind to").Short('p').Default("3000").Envar("PORT").String()
+	host     = kingpin.Flag("host", "the host to bind to").Short('h').Default("127.0.0.1").Envar("HOST").IP()
+	port     = kingpin.Flag("port", "the port to bind to").Short('p').Default("3000").Envar("PORT").String()
+	grpcPort = kingpin.Flag("grpc-port", "the grpc port to bind to").Default("30001").Envar("GRPC_PORT").String()
 
 	seedBrokers = kingpin.Flag("brokers", "the Kafka seed brokers. a string separated list: host:ip,host:ip,host:ip").Short('b').Required().Strings()
 
@@ -30,16 +33,18 @@ func main() {
 
 	asyncProducer = newAsyncProducer(config)
 	defer asyncProducer.Close()
-
-	createServer()
-	createGRPCServer()
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go createHTTPServer(&wg)
+	go createGRPCServer(&wg)
+	wg.Wait()
 }
 
 func configureKafkaClient() *config {
 	saramaConfig := sarama.NewConfig()
 	saramaConfig.Producer.Return.Errors = true
 
-	if saslUsername != nil && saslPassword != nil {
+	if *saslUsername != "" && *saslPassword != "" {
 		saramaConfig.Net.SASL.Enable = true
 		saramaConfig.Net.SASL.User = *saslUsername
 		saramaConfig.Net.SASL.Password = *saslPassword

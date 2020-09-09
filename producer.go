@@ -20,6 +20,8 @@ func newAsyncProducer(conf *config) sarama.AsyncProducer {
 func handleErrors(producer sarama.AsyncProducer) {
 	for {
 		err := <-producer.Errors()
-		log.Println("Failed to produce message", err)
+		if err != nil {
+			log.Println("Failed to produce message", err)
+		}
 	}
 }

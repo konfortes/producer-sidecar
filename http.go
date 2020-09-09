@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sync"
 
-	"github.com/konfortes/go-server-utils/server"
+	serverUtils "github.com/konfortes/go-server-utils/server"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-func createServer() {
+func createHTTPServer(wg *sync.WaitGroup) {
+	defer wg.Done()
 	mux := http.NewServeMux()
 	mux.Handle("/metrics", promhttp.Handler())
 	mux.HandleFunc("/produceAsync", produceAsync)
@@ -27,6 +29,5 @@ func createServer() {
 			log.Fatalf("listen: %s\n", err)
 		}
 	}()
-
-	server.GracefulShutdown(srv)
+	serverUtils.GracefulShutdown(srv)
 }
