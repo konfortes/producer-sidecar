@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
@@ -20,6 +21,11 @@ const (
 
 type server struct {
 	pb.UnimplementedProducerServer
+}
+
+func (s *server) ProduceAsync(ctx context.Context, in *pb.ProduceMessage) (*pb.ProduceReply, error) {
+	log.Printf("Producing to: %v", in.GetTopic())
+	return &pb.ProduceReply{Message: "Successfully pushed to producing queue"}, nil
 }
 
 func createGRPCServer(wg *sync.WaitGroup) {
