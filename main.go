@@ -32,6 +32,7 @@ func main() {
 	defer asyncProducer.Close()
 
 	createServer()
+	createGRPCServer()
 }
 
 func configureKafkaClient() *config {

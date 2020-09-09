@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = ".;messages";
+
+message ProduceMessage {
+    string topic = 1;
+	string payload = 2;
+	string partitioningKey = 3;
+}
+
+message ProduceReply {
+    string message = 1;
+}
+
+service Producer {
+    rpc ProduceAsync (ProduceMessage) returns (ProduceReply) {}
+}
