@@ -1,8 +1,9 @@
-module tbd
+module github.com/konfortes/tbd
 
 go 1.13
 
 require (
+	github.com/konfortes/tbd v0.1.0
 	github.com/Shopify/sarama v1.27.0
 	github.com/alecthomas/units v0.0.0-20190924025748-f65c72e2690d // indirect
 	github.com/golang/protobuf v1.4.2
