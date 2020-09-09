@@ -15,9 +15,9 @@ type config struct {
 var (
 	host     = kingpin.Flag("host", "the host to bind to").Short('h').Default("127.0.0.1").Envar("HOST").IP()
 	port     = kingpin.Flag("port", "the port to bind to").Short('p').Default("3000").Envar("PORT").String()
-	grpcPort = kingpin.Flag("grpc-port", "the grpc port to bind to").Default("30001").Envar("GRPC_PORT").String()
+	grpcPort = kingpin.Flag("grpc-port", "the grpc port to bind to").Default("30000").Envar("GRPC_PORT").String()
 
-	seedBrokers = kingpin.Flag("brokers", "the Kafka seed brokers. a string separated list: host:ip,host:ip,host:ip").Short('b').Required().Strings()
+	seedBrokers = kingpin.Flag("brokers", "the Kafka seed brokers. a string separated list: host:ip,host:ip,host:ip").Short('b').Required().Envar("BROKERS").Strings()
 
 	saslUsername = kingpin.Flag("username", "the SASL username to authenticate with. Please use SASL_USERNAME env var").Envar("SASL_USERNAME").String()
 	saslPassword = kingpin.Flag("password", "the SASL password to authenticate with. Please use SASL_PASSWORD env var").Envar("SASL_PASSWORD").String()
