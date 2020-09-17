@@ -13,7 +13,7 @@ type config struct {
 }
 
 var (
-	host     = kingpin.Flag("host", "the host to bind to").Short('h').Default("127.0.0.1").Envar("HOST").IP()
+	host     = kingpin.Flag("host", "the host to bind to").Short('h').Default("0.0.0.0").Envar("HOST").IP()
 	port     = kingpin.Flag("port", "the port to bind to").Short('p').Default("3000").Envar("PORT").String()
 	grpcPort = kingpin.Flag("grpc-port", "the grpc port to bind to").Default("30000").Envar("GRPC_PORT").String()
 

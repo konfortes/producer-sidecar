@@ -3,13 +3,13 @@ services:
   app:
     image: tbd
     build: .
-    entrypoint: dockerize -wait tcp://kafka:9092 -timeout 25s
-    command: ./tbd
+    entrypoint: ["dockerize", "-wait", "tcp://kafka:9092", "-timeout", "25s"]
+    command: ["./tbd"]
     depends_on:
-      - kafdrop
+      - kafka
     ports:
-      - 3000:3000
-      - 30001:30001
+      - '3000:3000'
+      - '30000:30000'
     environment:
       - BROKERS=kafka:9092
   zookeeper:
