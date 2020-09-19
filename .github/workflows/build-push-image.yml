@@ -1,23 +1,29 @@
-name: Build Push Image
-
+name: Publish Docker image
 on:
-  create:
-    tags:
-      - v*
-
+  release:
+    types: [published]
+  # create:
+  #   tags:
+  #     - v*
 jobs:
-  build-and-push:
-    name: Build And Push
+  push_to_registries:
+    name: Push Docker image to multiple registries
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Build and push Docker images
-      uses: docker/build-push-action@v1
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: konfortes/tbd
-        tag_with_ref: true
-        push: ${{ startsWith(github.ref, 'refs/tags/') }}
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: konfortes/tbd
+          tag_with_ref: true
+      - name: Push to GitHub Packages
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: docker.pkg.github.com
+          repository: konfortes/tbd/tbd
+          tag_with_ref: true
