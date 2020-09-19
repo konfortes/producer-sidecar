@@ -19,16 +19,15 @@ var (
 func main() {
 	kingpin.Parse()
 	address := fmt.Sprintf("%s:%s", host, *port)
-	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock(), grpc.WithTimeout(time.Second*2))
 
-	if err != nil {
-		log.Fatalf("did not connect: %v", err)
-	}
+	conn := getConnection(address)
 	defer conn.Close()
+
 	c := pb.NewProducerClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
+
 	message := &pb.ProduceMessage{
 		Topic:   "test",
 		Payload: `{"key": "value"}`,
@@ -38,4 +37,14 @@ func main() {
 		log.Fatalf("could not produce message: %v", err)
 	}
 	log.Printf("produce response: %s", r.GetMessage())
+}
+
+func getConnection(address string) *grpc.ClientConn {
+	conn, err := grpc.Dial(address, grpc.WithInsecure(), grpc.WithBlock(), grpc.WithTimeout(time.Second*2))
+
+	if err != nil {
+		log.Fatalf("did not connect: %v", err)
+	}
+
+	return conn
 }
